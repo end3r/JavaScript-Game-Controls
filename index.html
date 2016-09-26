@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>JavaScript game controls</title>
+    <style>* { padding: 0; margin: 0; } canvas { background: #013333 url(img/background.png) no-repeat; display: block; margin: 0 auto; }</style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="480" height="320"></canvas>
+
+<script>
+    // INIT
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    var playerHeight = 110;
+    var playerWidth = 92;
+    var playerX = (canvas.width - playerWidth) / 2;
+    var playerY = (canvas.height - playerHeight) / 2;
+    var rightPressed = false;
+    var leftPressed = false;
+    var upPressed = false;
+    var downPressed = false;
+	var img = new Image();
+	img.src = 'img/player.png';
+
+    // KEYBOARD
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    function keyDownHandler(e) {
+        if(e.keyCode == 39) {
+            rightPressed = true;
+        }
+        else if(e.keyCode == 37) {
+            leftPressed = true;
+        }
+        if(e.keyCode == 40) {
+        	downPressed = true;
+        }
+        else if(e.keyCode == 38) {
+        	upPressed = true;
+        }
+    }
+    function keyUpHandler(e) {
+        if(e.keyCode == 39) {
+            rightPressed = false;
+        }
+        else if(e.keyCode == 37) {
+            leftPressed = false;
+        }
+        if(e.keyCode == 40) {
+        	downPressed = false;
+        }
+        else if(e.keyCode == 38) {
+        	upPressed = false;
+        }
+    }
+
+    // MOUSE
+    document.addEventListener('mousemove', mouseMoveHandler);
+    function mouseMoveHandler(e) {
+        playerX = e.pageX - canvas.offsetLeft - playerWidth / 2;
+        playerY = e.pageY - canvas.offsetTop - playerHeight / 2;
+    }
+
+    // TOUCH
+    document.addEventListener('touchmove', touchMoveHandler, true);
+    function touchMoveHandler(e) {
+        playerX = e.touches[0].pageX - playerWidth / 2;
+        playerY = e.touches[0].pageY - playerHeight / 2;
+    }
+
+    // DRAW
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(rightPressed) {
+            playerX += 5;
+        }
+        else if(leftPressed) {
+            playerX -= 5;
+        }
+        if(downPressed) {
+            playerY += 5;
+        }
+        else if(upPressed) {
+            playerY -= 5;
+        }
+        ctx.drawImage(img, playerX, playerY);
+        requestAnimationFrame(draw);
+    }
+    draw();
+</script>
+
+</body>
+</html>
