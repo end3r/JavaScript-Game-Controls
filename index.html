@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <title>JavaScript game controls</title>
-    <style>* { padding: 0; margin: 0; } canvas { background: #013333 url(img/background.png) no-repeat; display: block; margin: 0 auto; }</style>
+    <style>* { padding: 0; margin: 0; } canvas { background: #013333 url(img/background.png) no-repeat; display: block; margin: 0 auto; } #output { text-align: center; margin-top: 30px; } </style>
+    <script src="http://js.leapmotion.com/leap-0.6.4.min.js"></script>
 </head>
 <body>
 
@@ -21,8 +22,8 @@
     var leftPressed = false;
     var upPressed = false;
     var downPressed = false;
-	var img = new Image();
-	img.src = 'img/player.png';
+    var img = new Image();
+    img.src = 'img/player.png';
 
     // KEYBOARD
     document.addEventListener("keydown", keyDownHandler, false);
@@ -35,10 +36,10 @@
             leftPressed = true;
         }
         if(e.keyCode == 40) {
-        	downPressed = true;
+            downPressed = true;
         }
         else if(e.keyCode == 38) {
-        	upPressed = true;
+            upPressed = true;
         }
     }
     function keyUpHandler(e) {
@@ -49,10 +50,10 @@
             leftPressed = false;
         }
         if(e.keyCode == 40) {
-        	downPressed = false;
+            downPressed = false;
         }
         else if(e.keyCode == 38) {
-        	upPressed = false;
+            upPressed = false;
         }
     }
 
@@ -70,9 +71,28 @@
         playerY = e.touches[0].pageY - playerHeight / 2;
     }
 
+    // LEAP MOTION
+    var toDegrees = 1 / (Math.PI / 180);
+    var horizontalDegree = 0;
+    var verticalDegree = 0;
+    var degreeThreshold = 30;
+    var grabStrength = 0;
+    Leap.loop({
+        hand: function(hand) {
+            horizontalDegree = Math.round(hand.roll() * toDegrees);
+            verticalDegree = Math.round(hand.pitch() * toDegrees);
+            grabStrength = hand.grabStrength;
+            output.innerHTML = 'Leap Motion:  <br />'
+                + ' roll: ' + horizontalDegree + '° <br />'
+                + ' pitch: ' + verticalDegree + '° <br />'
+                + ' strength: ' + grabStrength + '';
+        }
+    });
+
     // DRAW
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         if(rightPressed) {
             playerX += 5;
         }
@@ -85,11 +105,30 @@
         else if(upPressed) {
             playerY -= 5;
         }
+
+        if(horizontalDegree > degreeThreshold) {
+            playerX -= 5;
+        }
+        else if(horizontalDegree < -degreeThreshold) {
+            playerX += 5;
+        }
+        if(verticalDegree > degreeThreshold) {
+            playerY += 5;
+        }
+        else if(verticalDegree < -degreeThreshold) {
+            playerY -= 5;
+        }
+        if(grabStrength == 1) {
+            alert('BOOM!');
+        }
+
         ctx.drawImage(img, playerX, playerY);
         requestAnimationFrame(draw);
     }
     draw();
 </script>
+
+<div id="output"></div>
 
 </body>
 </html>
