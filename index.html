@@ -23,7 +23,7 @@
     var upPressed = false;
     var downPressed = false;
     var img = new Image();
-    img.src = 'img/player.png';
+    img.src = "img/player.png";
 
     // KEYBOARD
     document.addEventListener("keydown", keyDownHandler, false);
@@ -58,17 +58,45 @@
     }
 
     // MOUSE
-    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener("mousemove", mouseMoveHandler);
     function mouseMoveHandler(e) {
         playerX = e.pageX - canvas.offsetLeft - playerWidth / 2;
         playerY = e.pageY - canvas.offsetTop - playerHeight / 2;
     }
 
     // TOUCH
-    document.addEventListener('touchmove', touchMoveHandler, true);
+    document.addEventListener("touchmove", touchMoveHandler, true);
     function touchMoveHandler(e) {
         playerX = e.touches[0].pageX - playerWidth / 2;
         playerY = e.touches[0].pageY - playerHeight / 2;
+    }
+
+    // GAMEPAD
+    window.addEventListener("gamepadconnected", gamepadHandler);
+    var controller = {};
+    var buttonsPressed = [];
+    function gamepadHandler(e) {
+        controller = e.gamepad;
+        output.innerHTML = "Gamepad: " + controller.id;
+    }
+    function gamepadUpdateHandler() {
+        buttonsPressed = [];
+        if(controller.buttons) {
+            for(var b=0; b<controller.buttons.length; b++) {
+                if(controller.buttons[b].pressed) {
+                    buttonsPressed.push(b);
+                }
+            }
+        }
+    }
+    function gamepadButtonPressedHandler(button) {
+        var press = false;
+        for(var i=0; i<buttonsPressed.length; i++) {
+            if(buttonsPressed[i] == button) {
+                press = true;
+            }
+        }
+        return press;
     }
 
     // LEAP MOTION
@@ -82,10 +110,10 @@
             horizontalDegree = Math.round(hand.roll() * toDegrees);
             verticalDegree = Math.round(hand.pitch() * toDegrees);
             grabStrength = hand.grabStrength;
-            output.innerHTML = 'Leap Motion:  <br />'
-                + ' roll: ' + horizontalDegree + '° <br />'
-                + ' pitch: ' + verticalDegree + '° <br />'
-                + ' strength: ' + grabStrength + '';
+            output.innerHTML = "Leap Motion:  <br />"
+                + " roll: " + horizontalDegree + "° <br />"
+                + " pitch: " + verticalDegree + "° <br />"
+                + " strength: " + grabStrength;
         }
     });
 
@@ -93,6 +121,7 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
+        // KEYBOARD
         if(rightPressed) {
             playerX += 5;
         }
@@ -106,6 +135,25 @@
             playerY -= 5;
         }
 
+        // GAMEPAD
+        gamepadUpdateHandler();
+        if(gamepadButtonPressedHandler(0)) {
+            playerY -= 5;
+        }
+        else if(gamepadButtonPressedHandler(1)) {
+            playerY += 5;
+        }
+        if(gamepadButtonPressedHandler(2)) {
+            playerX -= 5;
+        }
+        else if(gamepadButtonPressedHandler(3)) {
+            playerX += 5;
+        }
+        if(gamepadButtonPressedHandler(11)) {
+            alert('BOOM!');
+        }
+
+        // LEAP MOTION
         if(horizontalDegree > degreeThreshold) {
             playerX -= 5;
         }
