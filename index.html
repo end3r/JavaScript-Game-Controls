@@ -62,13 +62,19 @@
     function mouseMoveHandler(e) {
         playerX = e.pageX - canvas.offsetLeft - playerWidth / 2;
         playerY = e.pageY - canvas.offsetTop - playerHeight / 2;
+        output.innerHTML = "Mouse:  <br />"+ " x: " + playerX + ", y: " + playerY;
     }
 
     // TOUCH
-    document.addEventListener("touchmove", touchMoveHandler, true);
-    function touchMoveHandler(e) {
-        playerX = e.touches[0].pageX - playerWidth / 2;
-        playerY = e.touches[0].pageY - playerHeight / 2;
+    document.addEventListener("touchstart", touchHandler);
+    document.addEventListener("touchmove", touchHandler);
+    function touchHandler(e) {
+        if(e.touches) {
+            playerX = e.touches[0].pageX - canvas.offsetLeft - playerWidth / 2;
+            playerY = e.touches[0].pageY - canvas.offsetTop - playerHeight / 2;
+            output.innerHTML = "Touch:  <br />"+ " x: " + playerX + ", y: " + playerY;
+            e.preventDefault();
+        }
     }
 
     // GAMEPAD
