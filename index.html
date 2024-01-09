@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>JavaScript game controls</title>
-    <style>* { padding: 0; margin: 0; } canvas { background: #013333 url(img/background.png) no-repeat; display: block; margin: 0 auto; } #output { text-align: center; margin-top: 30px; } </style>
+    <style>* { padding: 0; margin: 0; } canvas { background: #013333 url(img/background.png) no-repeat; display: block; margin: 0 auto; } #output { text-align: center; margin-top: 30px; white-space: pre-wrap } </style>
     <script src="js/leap-0.6.4.min.js"></script>
 </head>
 <body>
@@ -120,7 +120,7 @@
     function mouseMoveHandler(e) {
         playerX = e.pageX - canvas.offsetLeft - playerWidth / 2;
         playerY = e.pageY - canvas.offsetTop - playerHeight / 2;
-        output.innerHTML = "Mouse:  <br />"+ " x: " + playerX + ", y: " + playerY;
+        output.textContent = `Mouse:\nx: ${playerX}, y: ${playerY}`;
     }
 
     // TOUCH
@@ -130,7 +130,7 @@
         if(e.touches) {
             playerX = e.touches[0].pageX - canvas.offsetLeft - playerWidth / 2;
             playerY = e.touches[0].pageY - canvas.offsetTop - playerHeight / 2;
-            output.innerHTML = "Touch:  <br />"+ " x: " + playerX + ", y: " + playerY;
+            output.textContent = `Touch:\nx: ${playerX}, y: ${playerY}`;
             e.preventDefault();
         }
     }
@@ -141,7 +141,7 @@
     var buttonsPressed = [];
     function gamepadHandler(e) {
         controller = e.gamepad;
-        output.innerHTML = "Gamepad: " + controller.id;
+        output.textContent = `Gamepad: ${controller.id}`;
     }
     function gamepadUpdateHandler() {
         buttonsPressed = [];
@@ -174,17 +174,14 @@
             horizontalDegree = Math.round(hand.roll() * toDegrees);
             verticalDegree = Math.round(hand.pitch() * toDegrees);
             grabStrength = hand.grabStrength;
-            output.innerHTML = "Leap Motion:  <br />"
-                + " roll: " + horizontalDegree + "° <br />"
-                + " pitch: " + verticalDegree + "° <br />"
-                + " strength: " + grabStrength;
+            output.textContent = `Leap Motion: \nroll: ${horizontalDegree}°\npitch: ${verticalDegree}°\nstrength: ${grabStrength}`;
         }
     });
 
     // DRAW
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         // KEYBOARD
         if(rightPressed) {
             playerX += 5;
